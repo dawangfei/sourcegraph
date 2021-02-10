@@ -1,6 +1,6 @@
 import { isEqual } from 'lodash'
 import { from, Observable, of, throwError } from 'rxjs'
-import { catchError, distinctUntilChanged, map, publishReplay, refCount, switchMap } from 'rxjs/operators'
+import { catchError, debounceTime, distinctUntilChanged, map, publishReplay, refCount, switchMap } from 'rxjs/operators'
 import { gql } from '../graphql/graphql'
 import * as GQL from '../graphql/schema'
 import { PlatformContext } from '../platform/context'
@@ -18,6 +18,7 @@ export function viewerConfiguredExtensions({
     return from(settings).pipe(
         map(settings => extensionIDsFromSettings(settings)),
         distinctUntilChanged((a, b) => isEqual(a, b)),
+        debounceTime(200),
         switchMap(extensionIDs => queryConfiguredRegistryExtensions({ requestGraphQL }, extensionIDs)),
         catchError(error => throwError(asError(error))),
         publishReplay(),
