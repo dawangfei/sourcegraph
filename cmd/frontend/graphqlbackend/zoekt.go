@@ -420,6 +420,7 @@ func zoektSearch(ctx context.Context, args *search.TextParameters, repos *indexe
 	if err != nil {
 		return err
 	}
+	close(events)
 	<-done
 
 	mkStatusMap := func(mask search.RepoStatus) search.RepoStatusMap {

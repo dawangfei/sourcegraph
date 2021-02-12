@@ -81,7 +81,6 @@ func AggregateStreamSearch(ctx context.Context, streamSearch func(context.Contex
 	ctx, cancel := context.WithCancel(ctx)
 
 	events := make(chan *zoekt.SearchResult)
-	defer close(events)
 
 	done := make(chan struct{})
 	go func() {
@@ -112,6 +111,7 @@ func AggregateStreamSearch(ctx context.Context, streamSearch func(context.Contex
 	if err != nil {
 		return nil, err
 	}
+	close(events)
 	<-done
 
 	aggregate.Duration = time.Since(start)
